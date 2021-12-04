@@ -1,0 +1,16 @@
+{
+    "name": "Psr7",
+    "vendor": "Guzzle",
+    "description": "PSR-7 message implementation that also provides common utility methods",
+    "repo_url": "https://github.com/coding-liki/psr7.git",
+    "version": "0.1",
+    "psr-4": {
+        "GuzzleHttp\\Psr7\\": "src/"
+    },
+    "depends_on": [
+	"CodingLiki/OoAutoloader",
+	"Psr/Http",
+	"Psr/HttpFactory",
+	"Ralouphie/getallheaders"
+    ]
+}
