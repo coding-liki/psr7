@@ -10,7 +10,7 @@
     "depends_on": [
 	"CodingLiki/OoAutoloader",
 	"Psr/Http",
-	"Psr/HttpFactory",
+	"Psr/http-factory",
 	"Ralouphie/getallheaders"
     ]
 }
