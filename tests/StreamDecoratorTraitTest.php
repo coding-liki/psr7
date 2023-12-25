@@ -12,10 +12,13 @@ use Psr\Http\Message\StreamInterface;
 class Str implements StreamInterface
 {
     use StreamDecoratorTrait;
+
+    /** @var StreamInterface */
+    private $stream;
 }
 
 /**
- * @covers GuzzleHttp\Psr7\StreamDecoratorTrait
+ * @covers \GuzzleHttp\Psr7\StreamDecoratorTrait
  */
 class StreamDecoratorTraitTest extends TestCase
 {

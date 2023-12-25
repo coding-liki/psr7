@@ -3,17 +3,19 @@ name: Checks
 on:
   push:
     branches:
-      - master
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   composer-normalize:
     name: Composer Normalize
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Composer normalize
         uses: docker://ergebnis/composer-normalize-action

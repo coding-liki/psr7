@@ -37,7 +37,7 @@ class MessageTest extends TestCase
     public function testCorrectlyRendersSetCookieHeadersToString(): void
     {
         $response = new Psr7\Response(200, [
-            'Set-Cookie' => ['bar','baz','qux']
+            'Set-Cookie' => ['bar', 'baz', 'qux'],
         ], 'hello', '1.0', 'FOO');
         self::assertSame(
             "HTTP/1.0 200 FOO\r\nSet-Cookie: bar\r\nSet-Cookie: baz\r\nSet-Cookie: qux\r\n\r\nhello",
@@ -82,8 +82,8 @@ class MessageTest extends TestCase
         self::assertSame('foo.com', $request->getHeaderLine('Host'));
         self::assertSame('Bar', $request->getHeaderLine('Foo'));
         self::assertSame('Bam, Qux', $request->getHeaderLine('Baz'));
-        self::assertSame('Test', (string)$request->getBody());
-        self::assertSame('http://foo.com/abc', (string)$request->getUri());
+        self::assertSame('Test', (string) $request->getBody());
+        self::assertSame('http://foo.com/abc', (string) $request->getUri());
     }
 
     public function testParsesRequestMessagesWithHttpsScheme(): void
@@ -94,8 +94,8 @@ class MessageTest extends TestCase
         self::assertSame('/abc?baz=bar', $request->getRequestTarget());
         self::assertSame('1.1', $request->getProtocolVersion());
         self::assertSame('foo.com:443', $request->getHeaderLine('Host'));
-        self::assertSame('', (string)$request->getBody());
-        self::assertSame('https://foo.com/abc?baz=bar', (string)$request->getUri());
+        self::assertSame('', (string) $request->getBody());
+        self::assertSame('https://foo.com/abc?baz=bar', (string) $request->getUri());
     }
 
     public function testParsesRequestMessagesWithUriWhenHostIsNotFirst(): void
@@ -104,7 +104,7 @@ class MessageTest extends TestCase
         $request = Psr7\Message::parseRequest($req);
         self::assertSame('PUT', $request->getMethod());
         self::assertSame('/', $request->getRequestTarget());
-        self::assertSame('http://foo.com/', (string)$request->getUri());
+        self::assertSame('http://foo.com/', (string) $request->getUri());
     }
 
     public function testParsesRequestMessagesWithFullUri(): void
@@ -115,8 +115,8 @@ class MessageTest extends TestCase
         self::assertSame('https://www.google.com:443/search?q=foobar', $request->getRequestTarget());
         self::assertSame('1.1', $request->getProtocolVersion());
         self::assertSame('www.google.com', $request->getHeaderLine('Host'));
-        self::assertSame('', (string)$request->getBody());
-        self::assertSame('https://www.google.com/search?q=foobar', (string)$request->getUri());
+        self::assertSame('', (string) $request->getBody());
+        self::assertSame('https://www.google.com/search?q=foobar', (string) $request->getUri());
     }
 
     public function testParsesRequestMessagesWithCustomMethod(): void
@@ -124,6 +124,21 @@ class MessageTest extends TestCase
         $req = "GET_DATA / HTTP/1.1\r\nFoo: Bar\r\nHost: foo.com\r\n\r\n";
         $request = Psr7\Message::parseRequest($req);
         self::assertSame('GET_DATA', $request->getMethod());
+    }
+
+    public function testParsesRequestMessagesWithNumericHeader(): void
+    {
+        $req = "GET /abc HTTP/1.0\r\nHost: foo.com\r\nFoo: Bar\r\nBaz: Bam\r\nBaz: Qux\r\n123: 456\r\n\r\nTest";
+        $request = Psr7\Message::parseRequest($req);
+        self::assertSame('GET', $request->getMethod());
+        self::assertSame('/abc', $request->getRequestTarget());
+        self::assertSame('1.0', $request->getProtocolVersion());
+        self::assertSame('foo.com', $request->getHeaderLine('Host'));
+        self::assertSame('Bar', $request->getHeaderLine('Foo'));
+        self::assertSame('Bam, Qux', $request->getHeaderLine('Baz'));
+        self::assertSame('456', $request->getHeaderLine('123'));
+        self::assertSame('Test', (string) $request->getBody());
+        self::assertSame('http://foo.com/abc', (string) $request->getUri());
     }
 
     public function testParsesRequestMessagesWithFoldedHeadersOnHttp10(): void
@@ -169,7 +184,7 @@ class MessageTest extends TestCase
         self::assertSame('1.0', $response->getProtocolVersion());
         self::assertSame('Bar', $response->getHeaderLine('Foo'));
         self::assertSame('Bam, Qux', $response->getHeaderLine('Baz'));
-        self::assertSame('Test', (string)$response->getBody());
+        self::assertSame('Test', (string) $response->getBody());
     }
 
     public function testParsesResponseWithoutReason(): void
@@ -181,7 +196,7 @@ class MessageTest extends TestCase
         self::assertSame('1.0', $response->getProtocolVersion());
         self::assertSame('Bar', $response->getHeaderLine('Foo'));
         self::assertSame('Bam, Qux', $response->getHeaderLine('Baz'));
-        self::assertSame('Test', (string)$response->getBody());
+        self::assertSame('Test', (string) $response->getBody());
     }
 
     public function testParsesResponseWithLeadingDelimiter(): void
@@ -192,7 +207,7 @@ class MessageTest extends TestCase
         self::assertSame('OK', $response->getReasonPhrase());
         self::assertSame('1.0', $response->getProtocolVersion());
         self::assertSame('Bar', $response->getHeaderLine('Foo'));
-        self::assertSame('Test', (string)$response->getBody());
+        self::assertSame('Test', (string) $response->getBody());
     }
 
     public function testParsesResponseWithFoldedHeadersOnHttp10(): void
@@ -203,7 +218,7 @@ class MessageTest extends TestCase
         self::assertSame('OK', $response->getReasonPhrase());
         self::assertSame('1.0', $response->getProtocolVersion());
         self::assertSame('Bar Bam', $response->getHeaderLine('Foo'));
-        self::assertSame('Test', (string)$response->getBody());
+        self::assertSame('Test', (string) $response->getBody());
     }
 
     public function testResponseParsingFailsWithFoldedHeadersOnHttp11(): void
@@ -222,7 +237,7 @@ class MessageTest extends TestCase
         self::assertSame('1.0', $response->getProtocolVersion());
         self::assertSame('Bar', $response->getHeaderLine('Foo'));
         self::assertSame('Bam', $response->getHeaderLine('Baz'));
-        self::assertSame("Test\n\nOtherTest", (string)$response->getBody());
+        self::assertSame("Test\n\nOtherTest", (string) $response->getBody());
     }
 
     public function testResponseParsingFailsWithoutHeaderDelimiter(): void
@@ -256,14 +271,29 @@ class MessageTest extends TestCase
         self::assertSame('’é€௵ဪ‱', Psr7\Message::bodySummary($message));
     }
 
+    public function testMessageBodySummaryWithSpecialUTF8CharactersAndLargeBody(): void
+    {
+        $message = new Psr7\Response(200, [], '🤦🏾‍♀️');
+        // The first Unicode codepoint of the body has four bytes.
+        self::assertNull(Psr7\Message::bodySummary($message, 3));
+    }
+
     public function testMessageBodySummaryWithEmptyBody(): void
     {
         $message = new Psr7\Response(200, [], '');
         self::assertNull(Psr7\Message::bodySummary($message));
     }
 
+    public function testMessageBodySummaryNotInitiallyRewound(): void
+    {
+        $message = new Psr7\Response(200, [], 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.');
+        $message->getBody()->read(10);
+        self::assertSame('Lorem ipsu (truncated...)', Psr7\Message::bodySummary($message, 10));
+    }
+
     public function testGetResponseBodySummaryOfNonReadableStream(): void
     {
-        self::assertNull(Psr7\Message::bodySummary(new Psr7\Response(500, [], new ReadSeekOnlyStream())));
+        $message = new Psr7\Response(500, [], new ReadSeekOnlyStream());
+        self::assertNull(Psr7\Message::bodySummary($message));
     }
 }

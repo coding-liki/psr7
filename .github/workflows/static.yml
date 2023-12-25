@@ -3,17 +3,19 @@ name: Static analysis
 on:
   push:
     branches:
-      - master
   pull_request:
+
+permissions:
+  contents: read
 
 jobs:
   phpstan:
     name: PHPStan
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -21,7 +23,6 @@ jobs:
           php-version: '7.4'
           coverage: none
           extensions: mbstring
-          tools: composer
 
       - name: Download dependencies
         run: composer update --no-interaction --no-progress
@@ -34,11 +35,11 @@ jobs:
 
   php-cs-fixer:
     name: PHP-CS-Fixer
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -46,7 +47,6 @@ jobs:
           php-version: '7.4'
           coverage: none
           extensions: mbstring
-          tools: composer
 
       - name: Download dependencies
         run: composer update --no-interaction --no-progress
@@ -59,11 +59,11 @@ jobs:
 
   psalm:
     name: Psalm
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Setup PHP
         uses: shivammathur/setup-php@v2
@@ -71,7 +71,6 @@ jobs:
           php-version: '7.4'
           coverage: none
           extensions: mbstring
-          tools: composer
 
       - name: Download dependencies
         run: composer update --no-interaction --no-progress

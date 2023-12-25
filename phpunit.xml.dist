@@ -5,6 +5,7 @@
     beStrictAboutOutputDuringTests="true"
     beStrictAboutTestsThatDoNotTestAnything="true"
     bootstrap="vendor/autoload.php"
+    convertDeprecationsToExceptions="true"
 >
     <testsuites>
         <testsuite name="Guzzle PSR-7 Unit Test Suite">
@@ -14,7 +15,7 @@
         <testsuite name="Guzzle PSR-7 Integration Test Suite">
             <directory>tests/Integration</directory>
         </testsuite>
-        <testsuite name="PSR-7 Integration Test Suite">
+        <testsuite name="PSR-17 Integration Test Suite">
             <directory>./vendor/http-interop/http-factory-tests/test</directory>
         </testsuite>
     </testsuites>

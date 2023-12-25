@@ -10,7 +10,7 @@ use PHPUnit\Framework\TestCase;
 use Psr\Http\Message\UriInterface;
 
 /**
- * @covers GuzzleHttp\Psr7\Uri
+ * @covers \GuzzleHttp\Psr7\Uri
  */
 class UriTest extends TestCase
 {
@@ -152,11 +152,13 @@ class UriTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         (new Uri())->withHost([]);
     }
+
     public function testPathMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         (new Uri())->withPath([]);
     }
+
     public function testQueryMustHaveCorrectType(): void
     {
         $this->expectException(\InvalidArgumentException::class);
@@ -320,7 +322,7 @@ class UriTest extends TestCase
             2 => 2,
             1 => true,
             'false' => false,
-            'float' => 3.1
+            'float' => 3.1,
         ]);
 
         self::assertSame('2=2&1=1&false=&float=3.1', $uri->getQuery());
@@ -331,7 +333,7 @@ class UriTest extends TestCase
         $uri = new Uri();
         $uri = Uri::withQueryValues($uri, [
             'key1' => 'value1',
-            'key2' => 'value2'
+            'key2' => 'value2',
         ]);
 
         self::assertSame('key1=value1&key2=value2', $uri->getQuery());
@@ -343,11 +345,11 @@ class UriTest extends TestCase
 
         $uri = Uri::withQueryValues($uri, [
             'key1' => 'value1',
-            'key2' => 'value2'
+            'key2' => 'value2',
         ]);
 
         $uri = Uri::withQueryValues($uri, [
-            'key2' => 'newvalue'
+            'key2' => 'newvalue',
         ]);
 
         self::assertSame('key1=value1&key2=newvalue', $uri->getQuery());
@@ -591,17 +593,16 @@ class UriTest extends TestCase
 
     public function testAllowsForRelativeUri(): void
     {
-        $uri = (new Uri)->withPath('foo');
+        $uri = (new Uri())->withPath('foo');
         self::assertSame('foo', $uri->getPath());
         self::assertSame('foo', (string) $uri);
     }
 
-    public function testRelativePathAndAuthorityThrowsException(): void
+    public function testRelativePathAndAuthority(): void
     {
-        // concatenating a relative path with a host doesn't work: "//example.comfoo" would be wrong
-        $this->expectException(\InvalidArgumentException::class);
-        $this->expectExceptionMessage('The path of a URI with an authority must start with a slash "/" or be empty');
-        (new Uri)->withHost('example.com')->withPath('foo');
+        $uri = (new Uri())->withHost('example.com')->withPath('foo');
+        self::assertSame('foo', $uri->getPath());
+        self::assertSame('//example.com/foo', $uri->__toString());
     }
 
     public function testPathStartingWithTwoSlashesAndNoAuthorityIsInvalid(): void
@@ -609,7 +610,7 @@ class UriTest extends TestCase
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('The path of a URI without an authority must not start with two slashes "//"');
         // URI "//foo" would be interpreted as network reference and thus change the original path to the host
-        (new Uri)->withPath('//foo');
+        (new Uri())->withPath('//foo');
     }
 
     public function testPathStartingWithTwoSlashes(): void
@@ -627,7 +628,7 @@ class UriTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('A relative URI must not have a path beginning with a segment containing a colon');
-        (new Uri)->withPath('mailto:foo');
+        (new Uri())->withPath('mailto:foo');
     }
 
     public function testRelativeUriWithPathHavingColonSegment(): void
@@ -680,11 +681,11 @@ class UriTest extends TestCase
     public function testSpecialCharsOfUserInfo(): void
     {
         // The `userInfo` must always be URL-encoded.
-        $uri = (new Uri)->withUserInfo('foo@bar.com', 'pass#word');
+        $uri = (new Uri())->withUserInfo('foo@bar.com', 'pass#word');
         self::assertSame('foo%40bar.com:pass%23word', $uri->getUserInfo());
 
         // The `userInfo` can already be URL-encoded: it should not be encoded twice.
-        $uri = (new Uri)->withUserInfo('foo%40bar.com', 'pass%23word');
+        $uri = (new Uri())->withUserInfo('foo%40bar.com', 'pass%23word');
         self::assertSame('foo%40bar.com:pass%23word', $uri->getUserInfo());
     }
 
@@ -706,6 +707,13 @@ class UriTest extends TestCase
         self::assertSame('[2a00:f48:1008::212:183:10]', $uri->getHost());
         self::assertSame(56, $uri->getPort());
         self::assertSame('foo=bar', $uri->getQuery());
+    }
+
+    public function testJsonSerializable(): void
+    {
+        $uri = new Uri('https://example.com');
+
+        self::assertSame('{"uri":"https:\/\/example.com"}', \json_encode(['uri' => $uri]));
     }
 }
 
